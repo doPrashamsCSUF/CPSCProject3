@@ -1,4 +1,5 @@
 from email import header
+from email.policy import HTTP
 import databases
 import dataclasses
 import sqlite3
@@ -76,9 +77,9 @@ async def userAuth():
             result = await db.fetch_one( "SELECT * FROM user WHERE username= :username AND passwrd= :password",info, )
     # Is the user registered?
             if result is None:
-                return Response(json.dumps({ "WWW-Authenticate" : "Basic realm=User Visible Realm" }), status=401,content_type="application/json0")
+                return Response(headers={'WWW-Authenticate':'Basic real="Login Required"'},status=401) 
         except sqlite3.IntegrityError as e:
             abort(409,e)
-        return Response(json.dumps({ "authenticated": True }), status=200,content_type="application/json0", headers=info)
+        return Response(headers={ 'WWW-Authenticate': True }, status=200)
     else:
-        return Response(json.dumps({"invalid request" : "Invalid Request"}), status=400,content_type="application/json") 
+        return Response(headers={'WWW-Authenticate':'Basic real="Login Required"'},status=401) 

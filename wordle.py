@@ -52,10 +52,11 @@ def index():
     )
 
 @app.route("/games/", methods=["POST"])
-@validate_request(Game)
-async def create_game(data):
+
+async def create_game():
+    userdata = request.authorization
     db = await _get_db()
-    username = dataclasses.asdict(data)
+    username = userdata[0]
         # Retrive random ID from the answers table
     word = await db.fetch_one(
         "SELECT answerid FROM answer ORDER BY RANDOM() LIMIT 1"
