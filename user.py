@@ -6,15 +6,13 @@ import sqlite3
 
 import databases
 import json
-from httplib2 import Authentication
 
 from quart import Quart, g, request, abort, Response
-from quart_schema import QuartSchema, RequestSchemaValidationError, validate_request
+from quart_schema import QuartSchema, validate_request
 
 app = Quart(__name__)
 QuartSchema(app)
 
-#app.config.from_file(f"./etc/{__name__}.toml", toml.load)
 
 @dataclasses.dataclass
 class Credentials:
@@ -77,9 +75,9 @@ async def userAuth():
             result = await db.fetch_one( "SELECT * FROM user WHERE username= :username AND passwrd= :password",info, )
     # Is the user registered?
             if result is None:
-                return Response(headers={'WWW-Authenticate':'Basic real="Login Required"'},status=401) 
+                return Response(headers={'WWW-Authenticate':'Basic realm="Login Required"'},status=401) 
         except sqlite3.IntegrityError as e:
             abort(409,e)
-        return Response(headers={ 'WWW-Authenticate': True }, status=200)
+        return Response(headers={'Authenticated' : True, 'WWW-Authenticate': 'Basic realm="User Visible Realm"', 'Username' : info['username'],'password': info['password']}, status=200)
     else:
-        return Response(headers={'WWW-Authenticate':'Basic real="Login Required"'},status=401) 
+        return Response(headers={'WWW-Authenticate':'Basic realm="Login Required"'},status=401) 

@@ -1,26 +1,17 @@
 from cmath import exp
 from pydoc import doc
 import databases
-import collections
 import dataclasses
 import sqlite3
 import textwrap
 
 import databases
-import toml
 
 from quart import Quart, g, request, abort
-from quart_schema import QuartSchema, RequestSchemaValidationError, validate_request
+from quart_schema import QuartSchema, validate_request
 
 app = Quart(__name__)
 QuartSchema(app)
-
-#app.config.from_file(f"./etc/{__name__}.toml", toml.load)
-
-
-@dataclasses.dataclass
-class Game:
-    username: str
 
 @dataclasses.dataclass
 class Guess:
@@ -56,13 +47,12 @@ def index():
 async def create_game():
     userdata = request.authorization
     db = await _get_db()
-    username = userdata[0]
         # Retrive random ID from the answers table
     word = await db.fetch_one(
         "SELECT answerid FROM answer ORDER BY RANDOM() LIMIT 1"
     )
     # Check if the retrived word is a repeat for the user, and if so grab a new word
-    values={"username": username['username'], "answerid": word[0]}
+    values={"username": userdata['username'], "answerid": word[0]}
     while await db.fetch_one(
         "SELECT answerid FROM games WHERE username = :username AND answerid = :answerid",
         values,
@@ -80,7 +70,7 @@ async def create_game():
 
     # Create new row into Games table which connect with the recently connected game
     
-    values = {"username": username['username'], "answerid": word[0], "gameid": cur}
+    values = {"username": userdata['username'], "answerid": word[0], "gameid": cur}
     cur = await db.execute(
        "INSERT INTO games(username, answerid, gameid) VALUES(:username, :answerid, :gameid)", values,
     )
@@ -159,10 +149,11 @@ async def add_guess(data):
         return{"Error":"Invalid Word"}
     return {"guessedWord":currGame["word"], "Accuracy":accuracy},201
 
-@app.route("/games/<string:username>/all", methods=["GET"])
-async def all_games(username):
+@app.route("/games/all/", methods=["GET"])
+async def all_games():
     db = await _get_db()
-    values = {"username":username,"gstate":"In-progress"}
+    userdata = request.authorization
+    values = {"username":userdata['username'],"gstate":"In-progress"}
     games_val = await db.fetch_all( "SELECT * FROM game as a where gameid IN (select gameid from games where username = :username) and a.gstate = :gstate;", values,)
         
     if games_val is None or len(games_val) == 0:
@@ -171,11 +162,13 @@ async def all_games(username):
     return list(map(dict,games_val))
 
 
-@app.route("/games/<string:username>/<int:gameid>", methods=["GET"])
-async def my_game(username,gameid):
+@app.route("/games/<int:gameid>/", methods=["GET"])
+async def my_game(gameid):
     db = await _get_db()
-
-    guess_val = await db.fetch_all( "SELECT a.*, b.guesses, b.gstate FROM guess as a, game as b WHERE a.gameid = b.gameid and a.gameid = :gameid", values={"gameid":gameid})
+    userdata = request.authorization
+    username = userdata['username']
+    values={"gameid":gameid}
+    guess_val = await db.fetch_all( "SELECT a.*, b.guesses, b.gstate FROM guess as a, game as b WHERE a.gameid = b.gameid and a.gameid = :gameid", values,)
 
     if guess_val is None or len(guess_val) == 0:
             
