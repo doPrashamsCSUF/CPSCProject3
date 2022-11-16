@@ -20,7 +20,7 @@ Steps to run the project:
    restart Nginx by typing  $sudo service nginx restart
 
 
-4. Start the API by running
+4. Start the API
    go back to the directory that holds our project and start the api by typing
    $foreman start --formation wordle=3,user=1
 
