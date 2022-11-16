@@ -13,12 +13,6 @@ from quart_schema import QuartSchema, validate_request
 app = Quart(__name__)
 QuartSchema(app)
 
-
-@dataclasses.dataclass
-class Credentials:
-    username: str
-    password: str
-    
 @dataclasses.dataclass
 class User:
     first_name: str

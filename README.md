@@ -1,4 +1,4 @@
-# Wordle Backend Project1 : API Endpoints
+# Wordle Backend Project2 : API Endpoints
 
 Group 4 team members:
 
@@ -16,7 +16,7 @@ Steps to run the project:
 
    go to the directory /etc/nginx/sites-enabled
    create a new config file by typing $sudo "${EDITOR:-vi}" config
-   copy and paste the contents of untitled-1.txt into the file then type :wq
+   copy and paste the contents of config-nginx.txt into the file then type :wq
    restart Nginx by typing  $sudo service nginx restart
 
 
