@@ -23,7 +23,7 @@ Steps to run the project:
 
 
 
-spmccarthy4@mirdiland:~/cpsc449/Project2/449-proj-2$ http --auth jm:pass --auth-type basic GET http://mirdiland/login/ 
+$ http --auth jm:pass --auth-type basic GET http://tuffix-vm/login/ 
 
 HTTP/1.1 200 
 Connection: keep-alive
@@ -39,7 +39,7 @@ username: jm
 }
 
 
-spmccarthy4@mirdiland:~/cpsc449/Project2/449-proj-2$ http --auth syr:pass --auth-type basic POST http://mirdiland/games/ username="syr" 
+$ http --auth syr:pass --auth-type basic POST http://tuffix-vm/games/ username="syr" 
 
 HTTP/1.1 201 
 Connection: keep-alive
@@ -54,7 +54,7 @@ Server: nginx/1.18.0 (Ubuntu)
     "username": "syr"
 }
 
-spmccarthy4@mirdiland:~/cpsc449/Project2/449-proj-2$ http POST http://mirdiland/users/ first_name="sean" last_name="yvesroy" user_name="syr" password="pass"
+$ http POST http://tuffix-vm/users/ first_name="sean" last_name="yvesroy" user_name="syr" password="pass"
 
 HTTP/1.1 201 
 Connection: keep-alive
@@ -72,7 +72,7 @@ Server: nginx/1.18.0 (Ubuntu)
 }
 
 
-spmccarthy4@mirdiland:~/cpsc449/Project2/449-proj-2$ http --auth jm:pass --auth-type basic POST http://mirdiland/guess/ gameid="13" word="almes"
+$ http --auth jm:pass --auth-type basic POST http://tuffix-vm/guess/ gameid="13" word="almes"
 
 HTTP/1.1 201 
 Connection: keep-alive
