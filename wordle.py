@@ -15,7 +15,7 @@ from quart_schema import QuartSchema, RequestSchemaValidationError, validate_req
 app = Quart(__name__)
 QuartSchema(app)
 
-app.config.from_file(f"./etc/{__name__}.toml", toml.load)
+#app.config.from_file(f"./etc/{__name__}.toml", toml.load)
 
 
 @dataclasses.dataclass
@@ -28,16 +28,12 @@ class Guess:
     word: str
 
 
-async def _connect_db():
-    database = databases.Database(app.config["DATABASES"]["URL"])
-    await database.connect()
-    return database
-
-
-def _get_db():
-    if not hasattr(g, "sqlite_db"):
-        g.sqlite_db = _connect_db()
-    return g.sqlite_db
+async def _get_db():
+    db = getattr(g, "_sqlite_db", None)
+    if db is None:
+        db = g._sqlite_db = databases.Database('sqlite+aosqlite:/var/wordle.db')
+        await db.connect()
+    return db
 
 
 @app.teardown_appcontext
