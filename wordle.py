@@ -17,7 +17,9 @@ QuartSchema(app)
 class Guess:
     gameid: int
     word: str
-
+@dataclasses.dataclass
+class Game:
+    gameid: int
 
 async def _get_db():
     db = getattr(g, "_sqlite_db", None)
@@ -162,13 +164,14 @@ async def all_games():
     return list(map(dict,games_val))
 
 
-@app.route("/games/<int:gameid>/", methods=["GET"])
-async def my_game(gameid):
+@app.route("/games/", methods=["GET"])
+@validate_request(Game)
+async def my_game(data):
     db = await _get_db()
     userdata = request.authorization
+    game = dataclasses.asdict(data)
     username = userdata['username']
-    values={"gameid":gameid}
-    guess_val = await db.fetch_all( "SELECT a.*, b.guesses, b.gstate FROM guess as a, game as b WHERE a.gameid = b.gameid and a.gameid = :gameid", values,)
+    guess_val = await db.fetch_all( "SELECT a.*, b.guesses, b.gstate FROM guess as a, game as b WHERE a.gameid = b.gameid and a.gameid = :gameid", game,)
 
     if guess_val is None or len(guess_val) == 0:
             
