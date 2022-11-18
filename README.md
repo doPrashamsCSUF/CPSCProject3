@@ -8,16 +8,22 @@ Steps to run the project:
 
    ./bin/init.sh
 
+   (warning! If you do not have permission to execute any of the specified files use the $ chmod 755 (file name) command to change your permissions.) 
+   (ex. $ chmod 755 ./bin/init.sh)
+
 2. Populate the data base by running the python script:
 
    ./dbpop.py
+
+   (warning! If you do not have permission to execute any of the specified files use the $ chmod 755 (file name) command to change your permissions.) 
+   (ex. $ chmod 755 ./dbpop.py)
 
 3. Configure Nginx
 
    go to the directory /etc/nginx/sites-enabled
    create a new config file by typing $sudo "${EDITOR:-vi}" config
    copy and paste the contents of config-nginx.txt into the file then type :wq
-   restart Nginx by typing  $sudo service nginx restart
+   restart Nginx by typing  $ sudo service nginx restart
 
 
 4. Start the API
@@ -90,7 +96,7 @@ Make a guess
       }
 
 Look up a specific gamestate
-   $ http --auth <username>:<password> GET http://tuffix-vm/games/ gameid="<game id>" 
+   $ http --auth <username>:<password> GET http://tuffix-vm/games/ gameid="16" 
    
       HTTP/1.1 200 
       Connection: keep-alive
