@@ -35,6 +35,25 @@ Steps to run the project:
    go back to the directory that holds our project and start the api by typing
    $foreman start --formation wordle=3,user=1
 
+Create a new user
+   $ http POST http://tuffix-vm/users/ first_name="First name" last_name="Last name" user_name="user name" password="password"
+
+   HTTP/1.1 201 
+   Connection: keep-alive
+   Content-Length: 107
+   Content-Type: application/json
+   Date: Wed, 16 Nov 2022 00:05:58 GMT
+   Server: nginx/1.18.0 (Ubuntu)
+
+   {
+      "first_name": "sean",
+      "id": 3,
+      "last_name": "yvesroy",
+      "password": "pass",
+      "user_name": "syr"
+   }
+
+
 Login 
    $ http --auth username:password GET http://tuffix-vm/login/ 
 
@@ -67,23 +86,6 @@ Create a new game
          "username": "syr"
       }
 
-Create a new user
-   $ http POST http://tuffix-vm/users/ first_name="First name" last_name="Last name" user_name="user name" password="password"
-
-   HTTP/1.1 201 
-   Connection: keep-alive
-   Content-Length: 107
-   Content-Type: application/json
-   Date: Wed, 16 Nov 2022 00:05:58 GMT
-   Server: nginx/1.18.0 (Ubuntu)
-
-   {
-      "first_name": "sean",
-      "id": 3,
-      "last_name": "yvesroy",
-      "password": "pass",
-      "user_name": "syr"
-   }
 
 Make a guess
    $ http --auth username:password POST http://tuffix-vm/guess/ gameid="game id" word="word"
