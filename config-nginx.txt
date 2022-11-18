@@ -9,7 +9,7 @@ server {
     listen 80;
     listen [::]:80;
 
-    server_name mirdiland;
+    server_name tuffix-vm;
 
         
     location /users/ {
