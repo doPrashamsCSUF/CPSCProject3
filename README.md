@@ -90,7 +90,7 @@ Make a guess
       }
 
 Look up a specific gamestate
-   $ http --auth <username>:<password> GET http://tuffix-vm/games/<game id>/ 
+   $ http --auth <username>:<password> GET http://tuffix-vm/games/ gameid="/<game id>" 
    
       HTTP/1.1 200 
       Connection: keep-alive
