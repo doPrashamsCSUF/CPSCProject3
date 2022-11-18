@@ -27,7 +27,7 @@ Steps to run the project:
    create a new config file by typing $ sudo "${EDITOR:-vi}" config
 
    copy and paste the contents of config-nginx.txt into the file then type :wq
-   
+
    restart Nginx by typing  $ sudo service nginx restart
 
 
@@ -36,7 +36,7 @@ Steps to run the project:
    $foreman start --formation wordle=3,user=1
 
 Login 
-   $ http --auth <username>:<password> GET http://tuffix-vm/login/ 
+   $ http --auth username:password GET http://tuffix-vm/login/ 
 
       HTTP/1.1 200 
       Connection: keep-alive
@@ -52,7 +52,7 @@ Login
       }
 
 Create a new game
-   $ http --auth <username>:<password> POST http://tuffix-vm/games/ username="syr" 
+   $ http --auth username:password POST http://tuffix-vm/games/ 
 
       HTTP/1.1 201 
       Connection: keep-alive
@@ -68,7 +68,7 @@ Create a new game
       }
 
 Create a new user
-   $ http POST http://tuffix-vm/users/ first_name="<First name>" last_name="<Last name>" user_name="<user name>" password="<password>"
+   $ http POST http://tuffix-vm/users/ first_name="First name" last_name="Last name" user_name="user name" password="password"
 
    HTTP/1.1 201 
    Connection: keep-alive
@@ -86,7 +86,7 @@ Create a new user
    }
 
 Make a guess
-   $ http --auth jm:pass POST http://tuffix-vm/guess/ gameid="13" word="almes"
+   $ http --auth username:password POST http://tuffix-vm/guess/ gameid="game id" word="word"
 
       HTTP/1.1 201 
       Connection: keep-alive
@@ -101,7 +101,7 @@ Make a guess
       }
 
 Look up a specific gamestate
-   $ http --auth <username>:<password> GET http://tuffix-vm/games/ gameid="16" 
+   $ http --auth username:password GET http://tuffix-vm/games/ gameid=game id
    
       HTTP/1.1 200 
       Connection: keep-alive
@@ -122,7 +122,7 @@ Look up a specific gamestate
       ]
 
 Retrieve a list of active games for a user
-   $ http --auth <username>:<password> GET http://tuffix-vm/games/all/ 
+   $ http --auth username:password GET http://tuffix-vm/games/all/ 
    
       HTTP/1.1 200 
       Connection: keep-alive
