@@ -53,6 +53,9 @@ async def create_game():
     word = await db.fetch_one(
         "SELECT answerid FROM answer ORDER BY RANDOM() LIMIT 1"
     )
+    app.logger.info(
+         "SELECT answerid FROM answer ORDER BY RANDOM() LIMIT 1"
+    )
     # Check if the retrived word is a repeat for the user, and if so grab a new word
     values={"username": userdata['username'], "answerid": word[0]}
     while await db.fetch_one(
@@ -62,7 +65,13 @@ async def create_game():
         word = await db.fetch_one(
             "SELECT answerid FROM answer ORDER BY RANDOM() LIMIT 1"
         )
-
+        app.logger.info(
+             "SELECT answerid FROM answer ORDER BY RANDOM() LIMIT 1"
+        )
+    app.logger.info(
+        "SELECT answerid FROM games WHERE username = :username AND answerid = :answerid",
+        values,
+    )
     # Create new game with 0 guesses
     
     values = {"guesses": 0, "gstate": "In-progress"}
@@ -93,6 +102,9 @@ async def add_guess(data):
     isAnswer= await db.fetch_one(
         "SELECT * FROM answer as a where (select count(*) from games where gameid = :gameid and answerid = a.answerid)>=1 and a.answord = :word;", currGame
         )
+    app.logger.info(
+        "SELECT * FROM answer as a where (select count(*) from games where gameid = :gameid and answerid = a.answerid)>=1 and a.answord = :word;", currGame
+    )
     #is guessed word the answer
     if isAnswer is not None and len(isAnswer) >= 1:
         #update game status
@@ -106,13 +118,19 @@ async def add_guess(data):
             abort(404, e)
         return {"guessedWord":currGame["word"], "Accuracy":u'\u2713'*5},201 #should return correct answer? 
     #if 1 then word is valid otherwise it isn't valid and also check if they exceed guess limit
-    isValidGuess = await db.fetch_one("SELECT * from valid_word where valword = :word;", values={"word":currGame["word"]})
-    guessNum = await db.fetch_one("SELECT guesses from game where gameid = :gameid",values={"gameid":currGame["gameid"]})
+    values={"word":currGame["word"]}
+    isValidGuess = await db.fetch_one("SELECT * from valid_word where valword = :word;", values)
+    app.logger.info("SELECT * from valid_word where valword = :word;", values)
+    values={"gameid":currGame["gameid"]}
+    guessNum = await db.fetch_one("SELECT guesses from game where gameid = :gameid",values)
+    app.logger.info("SELECT guesses from game where gameid = :gameid",values)
     accuracy = ""
     if(isValidGuess is not None and len(isValidGuess) >= 1 and guessNum[0] < 6):
         try: 
             #make a dict mapping each character and its position from the answer
-            answord = await db.fetch_one("SELECT answord FROM answer as a, games as g  where g.gameid = :gameid and g.answerid = a.answerid",values={"gameid":currGame["gameid"]})
+            values={"gameid":currGame["gameid"]}
+            answord = await db.fetch_one("SELECT answord FROM answer as a, games as g  where g.gameid = :gameid and g.answerid = a.answerid",values)
+            app.logger.info("SELECT answord FROM answer as a, games as g  where g.gameid = :gameid and g.answerid = a.answerid",values)
             ansDict = {}
             for i in range(len(answord[0])):
                 ansDict[answord[0][i]] = i
@@ -157,7 +175,7 @@ async def all_games():
     userdata = request.authorization
     values = {"username":userdata['username'],"gstate":"In-progress"}
     games_val = await db.fetch_all( "SELECT * FROM game as a where gameid IN (select gameid from games where username = :username) and a.gstate = :gstate;", values,)
-        
+    app.logger.info( "SELECT * FROM game as a where gameid IN (select gameid from games where username = :username) and a.gstate = :gstate;", values,)        
     if games_val is None or len(games_val) == 0:
         return { "Message": "No Active Games" },406
 
@@ -172,7 +190,7 @@ async def my_game(data):
     game = dataclasses.asdict(data)
     username = userdata['username']
     guess_val = await db.fetch_all( "SELECT a.*, b.guesses, b.gstate FROM guess as a, game as b WHERE a.gameid = b.gameid and a.gameid = :gameid", game,)
-
+    app.logger.info( "SELECT a.*, b.guesses, b.gstate FROM guess as a, game as b WHERE a.gameid = b.gameid and a.gameid = :gameid", game,)
     if guess_val is None or len(guess_val) == 0:
             
         return { "Message": "Not An Active Game" },406

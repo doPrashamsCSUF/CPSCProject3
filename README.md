@@ -16,7 +16,7 @@ Steps to run the project:
 
 2. Populate the data base by running the python script:
 
-   ./dbpop.py
+   $ python3 dbpop.py
 
    (warning! If you do not have permission to execute any of the specified files use the $ chmod 755 (file name) command to change your permissions.) 
    (ex. $ chmod 755 ./dbpop.py)

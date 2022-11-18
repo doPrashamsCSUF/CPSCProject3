@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3 
 import json
 conn = sqlite3.connect('var/wordle.db')
 c = conn.cursor()

@@ -67,6 +67,7 @@ async def userAuth():
     if info:
         try:
             result = await db.fetch_one( "SELECT * FROM user WHERE username= :username AND passwrd= :password",info, )
+            app.logger.info( "SELECT * FROM user WHERE username= :username AND passwrd= :password",info, )
     # Is the user registered?
             if result is None:
                 return Response(headers={'WWW-Authenticate':'Basic realm="Login Required"'},status=401) 
