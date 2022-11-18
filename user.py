@@ -1,11 +1,9 @@
-from email import header
 from email.policy import HTTP
 import databases
 import dataclasses
 import sqlite3
 
 import databases
-import json
 
 from quart import Quart, g, request, abort, Response
 from quart_schema import QuartSchema, validate_request
@@ -67,7 +65,7 @@ async def userAuth():
     if info:
         try:
             result = await db.fetch_one( "SELECT * FROM user WHERE username= :username AND passwrd= :password",info, )
-            app.logger.info( "SELECT * FROM user WHERE username= :username AND passwrd= :password",info, )
+            #app.logger.info( "SELECT * FROM user WHERE username= :username AND passwrd= :password",info, )
     # Is the user registered?
             if result is None:
                 return Response(headers={'WWW-Authenticate':'Basic realm="Login Required"'},status=401) 
