@@ -1,4 +1,4 @@
-# Wordle Backend Project2 : API Endpoints
+# Wordle Backend Project3 : API Endpoints
 
 Team members:
 Prashams
