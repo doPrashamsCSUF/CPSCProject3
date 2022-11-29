@@ -1,9 +1,9 @@
 # Wordle Backend Project2 : API Endpoints
 
-Group 1 team members:
+Team members:
+Prashams
+Vaibhav
 Krishna Bhatia
-Mohamed Habarneh
-Sean McCarthy
 
 Steps to run the project:
 
