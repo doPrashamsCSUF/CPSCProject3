@@ -40,56 +40,56 @@ async def Results(data: LeaderInfo):
 
     if auth and auth.username and auth.password:
 
-        leaderboardData = dataclasses.asdict(data)
+        boardData = dataclasses.asdict(data)
 
         score = 0
         count = 1
-        if leaderboardData["result"] == "Win":
+        if boardData["result"] == "Win":
 
-            if leaderboardData["guesses"] == 1:
+            if boardData["guesses"] == 1:
                 score = 6
-            elif leaderboardData["guesses"] == 2:
+            elif boardData["guesses"] == 2:
                 score = 5
-            elif leaderboardData["guesses"] == 3:
+            elif boardData["guesses"] == 3:
                 score = 4
-            elif leaderboardData["guesses"] == 4:
+            elif boardData["guesses"] == 4:
                 score = 3
-            elif leaderboardData["guesses"] == 5:
+            elif boardData["guesses"] == 5:
                 score = 2
-            elif leaderboardData["guesses"] == 6:
+            elif boardData["guesses"] == 6:
                 score = 1
             else:
                 return {"Error": "Invalid Guesses."}, 404
-        elif leaderboardData["result"] == "Loss":
+        elif boardData["result"] == "Loss":
             score = 0
         else:
             return {"Error": "Invalid Result."}, 404
 
-        if redisClient.hget('leaderboard', 'username') == auth.username:
-            score = int(redisClient.hget('leaderboard', 'score')) + score
-            count = int(redisClient.hget('leaderboard', 'gamecount')) + count
+        if redisClient.hget('leaderboardGame', 'username') == auth.username:
+            score = int(redisClient.hget('leaderboardGame', 'score')) + score
+            count = int(redisClient.hget('leaderboardGame', 'gamecount')) + count
             averageScore = score / count
 
-            result = redisClient.hset('leaderboard', 'averageScore', averageScore)
-            result = redisClient.hset('leaderboard', 'result',leaderboardData["result"])
-            result = redisClient.hset('leaderboard', 'guesses',leaderboardData["guesses"])
-            result = redisClient.hset('leaderboard', 'score', score)
-            result = redisClient.hset('leaderboard', 'gamecount', count)
-            result2 = redisClient.zadd("Wordle Leaderboard", {auth.username: averageScore})
+            result = redisClient.hset('leaderboardGame', 'averageScore', averageScore)
+            result = redisClient.hset('leaderboardGame', 'result',boardData["result"])
+            result = redisClient.hset('leaderboardGame', 'guesses',boardData["guesses"])
+            result = redisClient.hset('leaderboardGame', 'score', score)
+            result = redisClient.hset('leaderboardGame', 'gamecount', count)
+            result2 = redisClient.zadd("leaderboardGame score ", {auth.username: averageScore})
 
 
         else:
 
-            result = redisClient.hset('leaderboard', 'username' , auth.username)
-            result = redisClient.hset('leaderboard', 'averageScore', score)
-            result = redisClient.hset('leaderboard', 'result',leaderboardData["result"])
-            result = redisClient.hset('leaderboard', 'guesses',leaderboardData["guesses"])
-            result = redisClient.hset('leaderboard', 'score', score)
-            result = redisClient.hset('leaderboard', 'gamecount', count)
-            result2 = redisClient.zadd("Wordle Leaderboard", {auth.username: score})
+            result = redisClient.hset('leaderboardGame', 'username' , auth.username)
+            result = redisClient.hset('leaderboardGame', 'averageScore', score)
+            result = redisClient.hset('leaderboardGame', 'result',boardData["result"])
+            result = redisClient.hset('leaderboardGame', 'guesses',boardData["guesses"])
+            result = redisClient.hset('leaderboardGame', 'score', score)
+            result = redisClient.hset('leaderboardGame', 'gamecount', count)
+            result2 = redisClient.zadd("leaderboardGamescore", {auth.username: score})
 
 
-        return redisClient.hgetall('leaderboard'), 200
+        return redisClient.hgetall('leaderboardGame'), 200
 
     else:
         return (
@@ -104,10 +104,8 @@ async def Results(data: LeaderInfo):
 async def topScores():
 
 
-    leaderboardSet = "Leaderboard"
 
-
-    topScores = redisClient.zrange("Wordle Leaderboard", 0, 9, desc = True, withscores = True)
+    topScores = redisClient.zrange("leaderboardGamescore", 0, 9, desc = True, withscores = True)
 
 
     if topScores != []:
