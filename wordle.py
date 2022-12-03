@@ -46,9 +46,14 @@ async def _get_db_sec2():
 @app.teardown_appcontext
 async def close_connection(exception):
     db = getattr(g, "_sqlite_db", None)
+    db1 = getattr(g, "_sqlite_db_sec1", None)
+    db2 = getattr(g, "_sqlite_db_sec2", None)
     if db is not None:
         await db.disconnect()
-
+    if db1 is not None:
+        await db1.disconnect()
+    if db2 is not None:
+        await db2.disconnect()
 
 @app.route("/", methods=["GET"])
 def index():
@@ -67,12 +72,17 @@ async def selectDb():
        if resp=="prim":
            db = await _get_db()
        return db
+       
+async def selectwriteDb():
+       
+       db = await _get_db()
+       return db
 
 @app.route("/games/", methods=["POST"])
 
 async def create_game():
     userdata = request.authorization
-    db=selectDb()
+    db=selectwriteDb()
       
         # Retrive random ID from the answers table
     word = await db.fetch_one(
@@ -116,7 +126,7 @@ async def create_game():
 @app.route("/guess/",methods=["POST"])
 @validate_request(Guess)
 async def add_guess(data):
-    db=selectDb() 
+    db=selectwriteDb() 
 
     currGame = dataclasses.asdict(data)
     #checks whether guessed word is the answer for that game
