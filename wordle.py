@@ -12,6 +12,7 @@ from quart_schema import QuartSchema, validate_request
 app = Quart(__name__)
 QuartSchema(app)
 
+
 @dataclasses.dataclass
 class Guess:
     gameid: int
