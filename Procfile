@@ -1,2 +1,1 @@
-wordle: hypercorn wordle --reload --debug --bind wordle.local.gd:$PORT --access-logfile - --error-logfile - --log-level DEBUG
-user: hypercorn user --reload --debug --bind user.local.gd:$PORT --access-logfile - --error-logfile - --log-level DEBUG
+leaderBoard: hypercorn leaderBoard --reload --debug --bind leaderBoard.local.gd:$PORT --access-logfile - --error-logfile - --log-level DEBUG

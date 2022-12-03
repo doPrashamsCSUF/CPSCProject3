@@ -1,0 +1,13 @@
+mount-dir: "./var/secondary1/mount"
+
+data-dir: "./var/secondary1/data"
+
+exec: "hypercorn wordle --reload --debug --bind wordle.local.gd:$PORT --access-logfile - --error-logfile - --log-level DEBUG"
+
+http:
+  addr: ":20203"
+
+static:
+  primary: false
+  hostname: "tuffix-vm"
+  advertise-url: "http://tuffix-vm:20202"

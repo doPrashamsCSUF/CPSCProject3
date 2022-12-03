@@ -2,6 +2,7 @@ import databases
 import dataclasses
 import sqlite3
 import textwrap
+import random
 
 import databases
 
@@ -22,7 +23,21 @@ class Game:
 async def _get_db():
     db = getattr(g, "_sqlite_db", None)
     if db is None:
-        db = g._sqlite_db = databases.Database('sqlite+aosqlite:/var/wordle.db')
+        db = g._sqlite_db = databases.Database('sqlite+aosqlite:/var/primary/mount/wordle.db')
+        await db.connect()
+    return db
+
+async def _get_db_sec1():
+    db = getattr(g, "_sqlite_db_sec1", None)
+    if db is None:
+        db = g._sqlite_db_sec1 = databases.Database('sqlite+aosqlite:/var/secondary1/mount/wordle.db')
+        await db.connect()
+    return db
+
+async def _get_db_sec2():
+    db = getattr(g, "_sqlite_db_sec2", None)
+    if db is None:
+        db = g._sqlite_db_sec2 = databases.Database('sqlite+aosqlite:/var/secondary2/mount/wordle.db')
         await db.connect()
     return db
 
@@ -41,12 +56,23 @@ def index():
         <h1>Welcome to Wordle 2.0!!!</h1>
         """
     )
+async def selectDb():
+       listDb =["sec1","sec2","prim"]
+       resp=random.choice(listDb)
+       if resp=="sec1":
+     	    db = await _get_db_sec1()
+       if resp=="sec2":
+           db = await _get_db_sec2()
+       if resp=="prim":
+           db = await _get_db()
+       return db
 
 @app.route("/games/", methods=["POST"])
 
 async def create_game():
     userdata = request.authorization
-    db = await _get_db()
+    db=selectDb()
+      
         # Retrive random ID from the answers table
     word = await db.fetch_one(
         "SELECT answerid FROM answer ORDER BY RANDOM() LIMIT 1"
@@ -89,7 +115,7 @@ async def create_game():
 @app.route("/guess/",methods=["POST"])
 @validate_request(Guess)
 async def add_guess(data):
-    db = await _get_db() 
+    db=selectDb() 
 
     currGame = dataclasses.asdict(data)
     #checks whether guessed word is the answer for that game
@@ -165,7 +191,7 @@ async def add_guess(data):
 
 @app.route("/games/all/", methods=["GET"])
 async def all_games():
-    db = await _get_db()
+    db=selectDb()
     userdata = request.authorization
     values = {"username":userdata['username'],"gstate":"In-progress"}
     games_val = await db.fetch_all( "SELECT * FROM game as a where gameid IN (select gameid from games where username = :username) and a.gstate = :gstate;", values,)
@@ -179,7 +205,7 @@ async def all_games():
 @app.route("/games/", methods=["GET"])
 @validate_request(Game)
 async def my_game(data):
-    db = await _get_db()
+    db=selectDb()
     userdata = request.authorization
     game = dataclasses.asdict(data)
     username = userdata['username']
